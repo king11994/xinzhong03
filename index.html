@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>新中物業 維修預約</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 600px; 
+            margin: 40px auto; 
+            padding: 20px; 
+            background: #f5f5f5; 
+        }
+        input, select, textarea { 
+            width: 100%; 
+            padding: 10px; 
+            margin: 10px 0; 
+            border: 1px solid #ccc; 
+            border-radius: 4px; 
+        }
+        button { 
+            background: #9b1c31; 
+            color: white; 
+            padding: 12px; 
+            border: none; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            width: 100%; 
+        }
+        button:hover { 
+            background: #7a1426; 
+        }
+    </style>
+</head>
+<body>
+    <h2 style="text-align:center;">維修預約申請</h2>
+
+    <!-- 替換下方 action 為您的 Google 表單 formResponse 網址 -->
+    <form 
+        action="https://docs.google.com/forms/u/0/d/e/1FAIpQLScQs-RKEFU4QbvhlTJss-aeiVujme_QJZ8iljnzrv8SEWuk0A/formResponse " 
+        method="POST" 
+        target="hidden_iframe" 
+        onsubmit="submitted=true;"
+    >
+        <!-- 隱藏欄位（時間戳記） -->
+        <input type="hidden" name="entry.0">
+
+        <!-- 申請單位（固定值） -->
+        <label>申請單位</label>
+        <input type="text" value="新中" readonly>
+
+        <!-- 經辦人 -->
+        <label>經辦人 <span style="color:red;">*</span></label>
+        <input type="text" name="entry.1" required>
+
+        <!-- 聯絡電話 -->
+        <label>聯絡電話 <span style="color:red;">*</span></label>
+        <input type="tel" name="entry.2" placeholder="請輸入電話號碼" required>
+
+        <!-- 地點 -->
+        <label>地點 <span style="color:red;">*</span></label>
+        <select name="entry.3" required>
+            <option value="">選擇部門</option>
+            <option value="營運部">營運部</option>
+            <option value="財務部">財務部</option>
+            <option value="人力資源部">人力資源部</option>
+        </select>
+
+        <!-- 所在樓層 -->
+        <label>所在樓層 <span style="color:red;">*</span></label>
+        <input type="text" name="entry.4" required>
+
+        <!-- 預約維修日期 -->
+        <label>預約維修日期 <span style="color:red;">*</span></label>
+        <input type="date" name="entry.5" required>
+
+        <!-- 問題描述 -->
+        <label>問題描述 <span style="color:red;">*</span></label>
+        <textarea name="entry.6" rows="5" required></textarea>
+
+        <!-- 提交按鈕 -->
+        <button type="submit">提交</button>
+    </form>
+
+    <!-- 固定加入這段 -->
+    <iframe name="hidden_iframe" style="display:none;"></iframe>
+
+    <!-- 提交成功提示 -->
+    <script>
+        window.addEventListener("load", () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('submitted') === 'true') {
+                alert("預約成功！我們將盡快處理您的請求！");
+            }
+        });
+
+        // 提交後刷新頁面並顯示提示
+        function submitForm(event) {
+            event.preventDefault();
+            const form = document.querySelector("form");
+            fetch(form.action, {
+                method: "POST",
+                body: new FormData(form)
+            }).then(() => {
+                alert("預約成功！");
+                form.reset();
+            }).catch(() => {
+                alert("提交失敗，請再試一次");
+            });
+        }
+
+        document.querySelector("form").addEventListener("submit", (e) => {
+            e.preventDefault();
+            const form = e.target;
+            const formData = new FormData(form);
+            fetch(form.action, {
+                method: "POST",
+                body: formData
+            }).then(() => {
+                window.location.href = window.location.href + "?submitted=true";
+            }).catch(() => {
+                alert("提交失敗，請再試一次");
+            });
+        });
+    </script>
+</body>
+</html>
